@@ -31,8 +31,14 @@ class Timer {
         if (timerElement) {
             if (min === 0 && sec === 0) {
                 timerElement.innerText = "Süre bitti";
+                document.getElementById("startButton")!.removeAttribute('disabled');
             } else if (sec < 10) {
                 timerElement.innerText = `${min} : 0${sec}`;
+                if (min < 10) {
+                    timerElement.innerText = `0${min} : 0${sec}`;
+                }
+            } else if (min < 10) {
+                timerElement.innerText = `0${min} : ${sec}`;
             } else {
                 timerElement.innerText = `${min} : ${sec}`;
             }
@@ -44,16 +50,20 @@ function delay(delay: number): Promise<void> {
     return new Promise((resolve: (value: (PromiseLike<void> | void)) => void): number => setTimeout(resolve, delay));
 }
 
-let timer: Timer = new Timer(25, 0o0);
+// süreler buradan ayarlarnır.
+let min: number = 24;
+let sec: number = 0;
+
 
 document.querySelector<HTMLDivElement>(`#app`)!.innerHTML = `
  <h1> Pomodoro App </h1>
- <p id="timer">${timer.min} : ${timer.sec}</p>
- <button id="startButton"> Start </button>
+ <p id="timer">${min} : ${sec}</p>
+ <button id="startButton" > Start </button>
 `;
 
 document.getElementById("startButton")!.addEventListener("click", (): void => {
-    // Çift tıklanmanın önüne geçer. Süre bittiği zaman tıklanabilir halle getirir
-    document.getElementById("startButton")!.setAttribute("disabled", "true");
-    if (timer.min === 0 && timer.sec === 0) document.getElementById("startButton")!.setAttribute("disabled", "false");
+    new Timer(min, sec);
+
+    // Çift tıklanmanın önüne geçer. Süre bitene kadar tıklanamaz.
+    document.getElementById("startButton")!.setAttribute("disabled", "");
 });
